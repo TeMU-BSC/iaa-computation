@@ -21,7 +21,7 @@ def argparser():
                         help = "absolute path to annotated brat files from annotator 2")
     parser.add_argument("-v", "--variables", required = False, dest = "variables", 
                         default = ['filename', 'code'],
-                        help = "absolute path to annotated brat files from annotator 2")    
+                        help = "Comma separated names of columns of interest to compute IAA")    
     
     args = parser.parse_args()
     
@@ -42,8 +42,8 @@ def parse_ann(datapath, output_path):
     Returns
     -------
     df: pandas DataFrame 
-        It has information from ann files. Columns: 'annotator', 'bunch',
-        'filename', 'mark', 'label', 'offset1', 'offset2', 'span', 'code'
+        It has information from ann files. Columns: 'annotator', 'filename',
+        'mark', 'label', 'offset', span', 'code'
     filenames: list 
         list of filenames
     '''

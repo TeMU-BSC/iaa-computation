@@ -9,6 +9,24 @@ Created on Wed Feb 19 13:00:10 2020
 from general_utils import parse_ann, argparser
 
 def compute_iaa(df1, df2, relevant_colnames):
+    '''
+    Compute IAA
+
+    Parameters
+    ----------
+    df1 : pandas dataframe
+        Annotations of annotator 1
+    df2 : pandas dataframe
+        Annotations of annotator 1
+    relevant_colnames : list
+        List of relevant column names to compute IAA.
+
+    Returns
+    -------
+    float
+        IAA (pairwise agreement: intersection / union)
+
+    '''
     df1_codes = df1[relevant_colnames].drop_duplicates(subset = relevant_colnames)
     df2_codes = df2[relevant_colnames].drop_duplicates(subset = relevant_colnames)
     df1_fc = set(df1_codes.apply('|'.join, axis=1).tolist())
@@ -20,10 +38,11 @@ def compute_iaa(df1, df2, relevant_colnames):
 
 if __name__ == '__main__':
     
-    path_annot1, path_annot2, relevant_colnames = argparser()
+    path_annot1, path_annot2, relevant_variables = argparser()
+    relevant_colnames = relevant_variables.split(',')
 
-    df1, filenames1 = parse_ann(path_annot1, '')
-    df2, filenames2 = parse_ann(path_annot2, '')
+    df1, _ = parse_ann(path_annot1, '')
+    df2, _ = parse_ann(path_annot2, '')
     
     print('-----------------------------------------------------------------')
     print('IAA taking into account {}'.format(relevant_colnames))
