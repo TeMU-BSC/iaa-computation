@@ -34,17 +34,27 @@ def compute_iaa(df1, df2, relevant_colnames):
     
     return len(df1_fc.intersection(df2_fc)) / len(df1_fc.union(df2_fc))
 
+def filter_pandas(df, column, values):
+    return df[df[column].isin(values)]
 
 
 if __name__ == '__main__':
     
-    path_annot1, path_annot2, relevant_variables = argparser()
-    relevant_colnames = relevant_variables.split(',')
+    ##### Get inputs #####
+    path_annot1, path_annot2, rel_variables, rel_labels = argparser()
+    relevant_colnames = rel_variables.split(',')
+    relevant_labels= rel_labels.split(',')
 
+    ##### GET ANN INFORMATION #####
     df1, _ = parse_ann(path_annot1, '')
     df2, _ = parse_ann(path_annot2, '')
     
+    ##### FILTER OUT LABELS NOT RELEVANT #####
+    df1 = filter_pandas(df1, 'label', relevant_labels)
+    df2 = filter_pandas(df2, 'label', relevant_labels)
+
+    ##### COMPUTE IAA #####
     print('-----------------------------------------------------------------')
-    print('IAA taking into account {}'.format(relevant_colnames))
+    print('IAA taking into account {}'.format(rel_variables))
     print('-----------------------------------------------------------------')
     print(round(compute_iaa(df1, df2, relevant_colnames),3))

@@ -20,12 +20,15 @@ def argparser():
     parser.add_argument("-a2", "--path2", required = True, dest = "path2", 
                         help = "absolute path to annotated brat files from annotator 2")
     parser.add_argument("-v", "--variables", required = False, dest = "variables", 
-                        default = ['filename', 'code'],
+                        default = 'filename,code',
                         help = "Comma separated names of columns of interest to compute IAA")    
+    parser.add_argument("-l", "--labels", required = False, dest = "labels", 
+                        default = 'MORFOLOGIA_NEOPLASIA',
+                        help = "Comma separated names of relevant labels")    
     
     args = parser.parse_args()
     
-    return args.path1, args.path2, args.variables
+    return args.path1, args.path2, args.variables, args.labels
 
 
 def parse_ann(datapath, output_path):
