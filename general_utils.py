@@ -181,7 +181,14 @@ def print_iaa_annotators(annotator_names, iaa_pairwise):
     '''
     Print IAA pairwise in a pretty way
     '''
-    
+    # Make sure iaa_pairwise and annotator_names have same order
+    first_key = [k[0] for k, v in iaa_pairwise.items()]
+    if first_key != sorted(first_key):
+        print('Cannot display pretty pairwise information due to unknown '+
+              'sorting error. We proceed to display it in non-pretty way')
+        print(iaa_pairwise)
+        return
+    # Print
     c = 0
     print(*([''] + annotator_names), sep='\t', end='')
     first_ann_old = ''

@@ -18,7 +18,7 @@ if __name__ == '__main__':
     labels_to_ignore= ig_labels.split(',')
 
     ##### GET ANN INFORMATION #####
-    annotator_paths = get_subfolder_names(datapath)
+    annotator_paths = sorted(get_subfolder_names(datapath))
     annotator_names = list(map(lambda x: x.split('/')[-1], annotator_paths))
 
     list_df = []
