@@ -174,3 +174,22 @@ def get_subfolder_names(path):
     return [f.path for f in os.scandir(path) if f.is_dir()]
 
     
+def print_iaa_annotators(annotator_paths, iaa_pairwise):
+    '''
+    Print IAA pairwise in a pretty way
+    '''
+    
+    c = 0
+    annotator_names = list(map(lambda x: x.split('/')[-1], annotator_paths))
+    print(*([''] + annotator_names), sep='\t', end='')
+    first_ann_old = ''
+    for k, v in iaa_pairwise.items():
+        first_ann = k[0]
+        if first_ann != first_ann_old:
+            print('\n')
+            print(first_ann, end='')
+            first_ann_old = first_ann
+            c = 0
+        c = c + 1
+        print('\t', end='')
+        print(str(round(v, 3)), end='')

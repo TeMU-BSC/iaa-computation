@@ -7,7 +7,7 @@ Created on Mon Apr 20 10:56:20 2020
 Compute IAA from several annotators (all vs all and detailed) and for different
 labels (all together and per label)
 """
-from general_utils import parse_ann, argparser, get_subfolder_names
+from general_utils import parse_ann, argparser, get_subfolder_names, print_iaa_annotators
 from compute_iaa import computations
 
 if __name__ == '__main__':
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     print('-----------------------------------------------------------------')
     print('IAA different annotators:')
     print('-----------------------------------------------------------------')
-    # TODO: print_iaa_annotators(annotator_paths, iaa_pairwise)
+    print_iaa_annotators(annotator_paths, iaa_pairwise)
        
         
     print('\n\n')
