@@ -7,26 +7,49 @@ Created on Mon Apr 20 10:56:20 2020
 Compute IAA from several annotators (all vs all and detailed) and for different
 labels (all together and per label)
 """
-from general_utils import parse_ann, argparser
-from compute_iaa import filter_pandas, compute_iaa
+from general_utils import parse_ann, argparser, get_subfolder_names
+from compute_iaa import computations
 
 if __name__ == '__main__':
     
     ##### Get inputs #####
-    path_annot1, path_annot2, rel_variables, rel_labels = argparser()
+    datapath, rel_variables,_ = argparser()
     relevant_colnames = rel_variables.split(',')
-    relevant_labels= rel_labels.split(',')
+    #relevant_labels= rel_labels.split(',')
 
     ##### GET ANN INFORMATION #####
-    df1, _ = parse_ann(path_annot1)
-    df2, _ = parse_ann(path_annot2)
-    
-    ##### FILTER OUT LABELS NOT RELEVANT #####
-    df1 = filter_pandas(df1, 'label', relevant_labels)
-    df2 = filter_pandas(df2, 'label', relevant_labels)
+    annotator_paths = get_subfolder_names(datapath)
+    annotator_names = list(map(lambda x: x.split('/')[-1], annotator_paths))
 
+    list_df = []
+    for annotator in annotator_paths:
+        list_df.append(parse_ann(annotator))
+    
     ##### COMPUTE IAA #####
+    (iaa_all_vs_all, iaa_pairwise,
+     iaa_by_label) = computations(list_df, relevant_colnames,
+                                  annotator_names, by_label=True)
+    
+    ###### PRINT ######
+    print('_________________________________________________________________')
+    print('\nIAA taking into account {}'.format(rel_variables))
+    print('_________________________________________________________________')
+    print('\n\n')
     print('-----------------------------------------------------------------')
-    print('IAA taking into account {}'.format(rel_variables))
+    print('1. IAA all vs all')
     print('-----------------------------------------------------------------')
-    print(round(compute_iaa(df1, df2, relevant_colnames),3))
+    print(round(iaa_all_vs_all,3))
+    print('\n\n')
+    print('-----------------------------------------------------------------')
+    print('IAA different annotators:')
+    print('-----------------------------------------------------------------')
+    # TODO: print_iaa_annotators(annotator_paths, iaa_pairwise)
+       
+        
+    print('\n\n')
+    print('-----------------------------------------------------------------')
+    print('IAA per label:')
+    print('-----------------------------------------------------------------')
+    for k, v in iaa_by_label.items():
+        print(k +': '+ str(round(v[0], 3)))
+        

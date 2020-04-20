@@ -15,7 +15,7 @@ def argparser():
     '''
     
     parser = argparse.ArgumentParser(description='process user given parameters')
-    parser.add_argument("-a1", "--path1", required = True, dest = "path1", 
+    parser.add_argument("-d", "--datapath", required = True, dest = "path1", 
                         help = "absolute path to brat directory. Within it, "+
                         "we must have one folder per annotator. With all " +
                         "the annotated files directly in the folder")
@@ -31,7 +31,7 @@ def argparser():
     return args.path1, args.variables, args.labels
 
 
-def parse_ann(datapath):
+def parse_ann(datapath, with_notes=False):
     '''
     DESCRIPTION: parse information in .ann files.
     
@@ -56,15 +56,25 @@ def parse_ann(datapath):
              if filename[-3:] != 'ann':
                  continue # get only ann files
              #print(os.path.join(root,filename))
-             info, filenames = parse_one_ann(info, filenames, root, filename)
+             if with_notes == True:
+                 info, filenames = parse_one_ann_with_notes(info, filenames,
+                                                            root, filename)
+             else:
+                 info, filenames = parse_one_ann_without_notes(info, filenames,
+                                                               root, filename)
 
     # Save parsed .ann files
-    df = pd.DataFrame(info, columns=['annotator', 'filename', 'mark', 'label',
-                                     'offset', 'span', 'code'])
+    if with_notes == True:
+        df = pd.DataFrame(info, columns=['annotator', 'filename', 'mark',
+                                         'label','offset', 'span', 'code'])
+    else:
+        df = pd.DataFrame(info, columns=['annotator', 'filename', 'mark',
+                                         'label','offset', 'span'])
     
-    return df, filenames
+    #return df, filenames
+    return df
 
-def parse_one_ann(info, filenames, root, filename):
+def parse_one_ann_with_notes(info, filenames, root, filename):
     '''
     DESCRIPTION: parse information in one .ann file.
     
@@ -113,4 +123,54 @@ def parse_one_ann(info, filenames, root, filename):
                          offset, span, code])
             
     return info, filenames
+
+def parse_one_ann_without_notes(info, filenames, root, filename):
+    '''
+    DESCRIPTION: parse information in one .ann file.
+    
+    Parameters
+    ----------
+           
+    Returns
+    -------
+    
+    '''
+    f = open(os.path.join(root,filename)).readlines()
+    filenames.append(filename)
+    # Get annotator and bunch
+    annotator = root.split('/')[-1]
+    
+    # Parse .ann file           
+    for line in f:
+        if line[0] != 'T':
+            continue
+        splitted = line.split('\t')
+        if len(splitted)<3:
+            print('Line with less than 3 tabular splits:')
+            print(root + filename)
+            print(line)
+            print(splitted)
+        if len(splitted)>3:
+            print('Line with more than 3 tabular splits:')
+            print(root + filename)
+            print(line)
+            print(splitted)
+        mark = splitted[0]
+        label_offset = splitted[1]
+        label = label_offset.split(' ')[0]
+        offset = ' '.join(label_offset.split(' ')[1:])
+        span = splitted[2].strip()
+        info.append([annotator, filename, mark, label,
+                     offset, span])
+            
+    return info, filenames
+
+
+def get_subfolder_names(path):
+    '''
+    From https://stackoverflow.com/questions/800197/how-to-get-all-of-the-immediate-subdirectories-in-python
+    '''
+    
+    return [f.path for f in os.scandir(path) if f.is_dir()]
+
     
