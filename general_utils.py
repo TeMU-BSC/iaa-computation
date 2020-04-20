@@ -24,14 +24,14 @@ def argparser():
                         help = "Comma separated names of columns of interest to compute IAA")    
     parser.add_argument("-l", "--labels", required = False, dest = "labels", 
                         default = 'MORFOLOGIA_NEOPLASIA',
-                        help = "Comma separated names of relevant labels")    
+                        help = "Comma separated names of NON relevant labels")    
     
     args = parser.parse_args()
     
     return args.path1, args.variables, args.labels
 
 
-def parse_ann(datapath, with_notes=False):
+def parse_ann(datapath, labels_to_ignore, with_notes=False):
     '''
     DESCRIPTION: parse information in .ann files.
     
@@ -61,7 +61,8 @@ def parse_ann(datapath, with_notes=False):
                                                             root, filename)
              else:
                  info, filenames = parse_one_ann_without_notes(info, filenames,
-                                                               root, filename)
+                                                               root, filename,
+                                                               labels_to_ignore)
 
     # Save parsed .ann files
     if with_notes == True:
@@ -124,7 +125,7 @@ def parse_one_ann_with_notes(info, filenames, root, filename):
             
     return info, filenames
 
-def parse_one_ann_without_notes(info, filenames, root, filename):
+def parse_one_ann_without_notes(info, filenames, root, filename, labels_to_ignore):
     '''
     DESCRIPTION: parse information in one .ann file.
     
@@ -158,6 +159,8 @@ def parse_one_ann_without_notes(info, filenames, root, filename):
         mark = splitted[0]
         label_offset = splitted[1]
         label = label_offset.split(' ')[0]
+        if label in labels_to_ignore:
+            continue
         offset = ' '.join(label_offset.split(' ')[1:])
         span = splitted[2].strip()
         info.append([annotator, filename, mark, label,
@@ -174,13 +177,12 @@ def get_subfolder_names(path):
     return [f.path for f in os.scandir(path) if f.is_dir()]
 
     
-def print_iaa_annotators(annotator_paths, iaa_pairwise):
+def print_iaa_annotators(annotator_names, iaa_pairwise):
     '''
     Print IAA pairwise in a pretty way
     '''
     
     c = 0
-    annotator_names = list(map(lambda x: x.split('/')[-1], annotator_paths))
     print(*([''] + annotator_names), sep='\t', end='')
     first_ann_old = ''
     for k, v in iaa_pairwise.items():

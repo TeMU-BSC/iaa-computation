@@ -13,9 +13,9 @@ from compute_iaa import computations
 if __name__ == '__main__':
     
     ##### Get inputs #####
-    datapath, rel_variables,_ = argparser()
+    datapath, rel_variables, ig_labels = argparser()
     relevant_colnames = rel_variables.split(',')
-    #relevant_labels= rel_labels.split(',')
+    labels_to_ignore= ig_labels.split(',')
 
     ##### GET ANN INFORMATION #####
     annotator_paths = get_subfolder_names(datapath)
@@ -23,7 +23,7 @@ if __name__ == '__main__':
 
     list_df = []
     for annotator in annotator_paths:
-        list_df.append(parse_ann(annotator))
+        list_df.append(parse_ann(annotator, labels_to_ignore))
     
     ##### COMPUTE IAA #####
     (iaa_all_vs_all, iaa_pairwise,
@@ -43,13 +43,13 @@ if __name__ == '__main__':
     print('-----------------------------------------------------------------')
     print('IAA different annotators:')
     print('-----------------------------------------------------------------')
-    print_iaa_annotators(annotator_paths, iaa_pairwise)
+    print_iaa_annotators(annotator_names, iaa_pairwise)
        
         
     print('\n\n')
     print('-----------------------------------------------------------------')
     print('IAA per label:')
     print('-----------------------------------------------------------------')
-    for k, v in iaa_by_label.items():
+    for k, v in sorted(iaa_by_label.items()):
         print(k +': '+ str(round(v[0], 3)))
         
