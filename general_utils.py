@@ -56,13 +56,9 @@ def parse_ann(datapath, labels_to_ignore, with_notes=False):
              if filename[-3:] != 'ann':
                  continue # get only ann files
              #print(os.path.join(root,filename))
-             if with_notes == True:
-                 info, filenames = parse_one_ann_with_notes(info, filenames,
-                                                            root, filename)
-             else:
-                 info, filenames = parse_one_ann_without_notes(info, filenames,
-                                                               root, filename,
-                                                               labels_to_ignore)
+             
+             info, filenames = parse_one_ann(info, filenames, root, filename,
+                                             labels_to_ignore, ignore_related=True)
 
     # Save parsed .ann files
     if with_notes == True:
@@ -75,7 +71,9 @@ def parse_ann(datapath, labels_to_ignore, with_notes=False):
     #return df, filenames
     return df
 
-def parse_one_ann_with_notes(info, filenames, root, filename):
+
+def parse_one_ann(info, filenames, root, filename, labels_to_ignore,
+                  ignore_related=False, with_notes=False):
     '''
     DESCRIPTION: parse information in one .ann file.
     
@@ -92,56 +90,24 @@ def parse_one_ann_with_notes(info, filenames, root, filename):
     annotator = root.split('/')[-1]
     
     # Parse .ann file
+    related_marks = []     
+    if ignore_related == True:   
+        # extract relations
+        for line in f:
+            if line[0] != 'R':
+                continue
+            related_marks.append(line.split('\t')[1].split(' ')[1].split(':')[1])
+            related_marks.append(line.split('\t')[1].split(' ')[2].split(':')[1])
+            
     mark2code = {}
-    for line in f:
-        if line[0] != '#':
-            continue
-        line_split = line.split('\t')
-        mark2code[line_split[1].split(' ')[1]] = line_split[2].strip()
-            
-    for line in f:
-        if line[0] != 'T':
-            continue
-        splitted = line.split('\t')
-        if len(splitted)<3:
-            print('Line with less than 3 tabular splits:')
-            print(root + filename)
-            print(line)
-            print(splitted)
-        if len(splitted)>3:
-            print('Line with more than 3 tabular splits:')
-            print(root + filename)
-            print(line)
-            print(splitted)
-        mark = splitted[0]
-        label_offset = splitted[1]
-        label = label_offset.split(' ')[0]
-        offset = ' '.join(label_offset.split(' ')[1:])
-        span = splitted[2].strip()
-        if mark in mark2code.keys():
-            code = mark2code[mark]
-            info.append([annotator, filename, mark, label,
-                         offset, span, code])
-            
-    return info, filenames
-
-def parse_one_ann_without_notes(info, filenames, root, filename, labels_to_ignore):
-    '''
-    DESCRIPTION: parse information in one .ann file.
+    if with_notes == True:
+        # extract notes
+        for line in f:
+            if line[0] != '#':
+                continue
+            line_split = line.split('\t')
+            mark2code[line_split[1].split(' ')[1]] = line_split[2].strip()
     
-    Parameters
-    ----------
-           
-    Returns
-    -------
-    
-    '''
-    f = open(os.path.join(root,filename)).readlines()
-    filenames.append(filename)
-    # Get annotator and bunch
-    annotator = root.split('/')[-1]
-    
-    # Parse .ann file           
     for line in f:
         if line[0] != 'T':
             continue
@@ -157,14 +123,24 @@ def parse_one_ann_without_notes(info, filenames, root, filename, labels_to_ignor
             print(line)
             print(splitted)
         mark = splitted[0]
+        if mark in related_marks:
+            continue
         label_offset = splitted[1]
         label = label_offset.split(' ')[0]
         if label in labels_to_ignore:
             continue
         offset = ' '.join(label_offset.split(' ')[1:])
         span = splitted[2].strip()
-        info.append([annotator, filename, mark, label,
-                     offset, span])
+        
+        if with_notes == False:
+            info.append([annotator, filename, mark, label,
+                         offset, span])
+            continue
+        
+        if mark in mark2code.keys():
+            code = mark2code[mark]
+            info.append([annotator, filename, mark, label,
+                         offset, span, code])
             
     return info, filenames
 

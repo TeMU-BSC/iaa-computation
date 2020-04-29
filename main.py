@@ -53,3 +53,25 @@ if __name__ == '__main__':
     for k, v in sorted(iaa_by_label.items()):
         print(k +': '+ str(round(v[0], 3)))
         
+    if 'COMPATIBLE_COVID' in iaa_by_label.keys():
+        print('\n-----------------------------------------------------------------')
+        print('COMPATIBLE_COVID')
+        print_iaa_annotators(annotator_names, iaa_by_label['COMPATIBLE_COVID'][1])
+    
+    if 'NO_COMPATIBLE_COVID' in iaa_by_label.keys():
+        print('\n-----------------------------------------------------------------')
+        print('NO_COMPATIBLE_COVID')
+        print_iaa_annotators(annotator_names, iaa_by_label['NO_COMPATIBLE_COVID'][1])
+        
+    if 'NO_SE_DESCARTA_COVID' in iaa_by_label.keys():
+        print('\n-----------------------------------------------------------------')
+        print('NO_SE_DESCARTA_COVID')
+        print_iaa_annotators(annotator_names, iaa_by_label['NO_SE_DESCARTA_COVID'][1])
+        
+    if 'NORMAL' in iaa_by_label.keys():
+        print('\n-----------------------------------------------------------------')
+        print('NORMAL')
+        print_iaa_annotators(annotator_names, iaa_by_label['NORMAL'][1])
+    
+    
+    print('\n')
