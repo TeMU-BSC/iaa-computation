@@ -6,6 +6,8 @@ Created on Wed Feb 19 13:00:10 2020
 @author: antonio
 """
 
+from collections import Counter
+
 def computations(list_df, relevant_colnames, annotator_names, by_label=False):
     '''
     Compute IAA
@@ -36,8 +38,10 @@ def computations(list_df, relevant_colnames, annotator_names, by_label=False):
     # Get labels
     labels = []
     for df in list_df:
-        labels = labels + df.label.drop_duplicates().to_list()
-    labels = set(labels)
+        labels = labels + df.label.to_list()
+    count_labels = Counter(labels)
+    labels = set(count_labels.keys())
+    
     
     # Extract info from dataframe
     codes,_ = get_codes(list_df, relevant_colnames, labels)
@@ -57,7 +61,7 @@ def computations(list_df, relevant_colnames, annotator_names, by_label=False):
         iaa_all_vs_all_l, iaa_pairwise_l = compute_iaa(codes, annotator_names)
         
         iaa_by_label[label] = (iaa_all_vs_all_l, iaa_pairwise_l)
-    return iaa_all_vs_all, iaa_pairwise, iaa_by_label
+    return iaa_all_vs_all, iaa_pairwise, iaa_by_label, count_labels
 
 def get_codes(list_df, relevant_colnames,rel_labels):
     '''

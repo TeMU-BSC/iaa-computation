@@ -27,8 +27,8 @@ if __name__ == '__main__':
     
     ##### COMPUTE IAA #####
     (iaa_all_vs_all, iaa_pairwise,
-     iaa_by_label) = computations(list_df, relevant_colnames,
-                                  annotator_names, by_label=True)
+     iaa_by_label, count_labels) = computations(list_df, relevant_colnames,
+                                                annotator_names, by_label=True)
     
     ###### PRINT ######
     print('_________________________________________________________________')
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     print('IAA per label:')
     print('-----------------------------------------------------------------')
     for k, v in sorted(iaa_by_label.items()):
-        print(k +': '+ str(round(v[0], 3)))
+        print(k +': '+ str(round(v[0], 3)) + '\t('+ str(count_labels[k]) + ')')
         
     if 'COMPATIBLE_COVID' in iaa_by_label.keys():
         print('\n-----------------------------------------------------------------')
