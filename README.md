@@ -8,12 +8,12 @@ python main.py --datapath /path/to/brat/files/ --variables relevant,variables -l
 
 ## Arguments
 + --datapath: path with one subdirectory per annotator (see toy data).
-+ --variables: relevant variables in IAA computation. Possible values are: annotator, filename, mark, label, offset, span, code. If we choose "--variables filename,label,span", matches are annotations in the same file, with same label and same text span. It is recommended to always use those three (filename,label,span).
++ --variables: relevant variables in IAA computation. Possible values are: annotator, filename, mark, label, offset, span, code. If we choose "--variables filename,label,offset", matches are annotations in the same file, with same label and in the same position in text. It is recommended to always use those three (filename,label,offset).
 + -l: labels to consider when computing IAA. 
 
 ### Example:
 ```
-python main.py --datapath toy_data --variables filename,label,span -l OTROS,T_AP
+python main.py --datapath toy_data --variables filename,label,offset -l OTROS,T_AP
 ```
 ```
 python main.py --datapath toy_data --variables filename,label -l OTROS,T_AP
