@@ -20,18 +20,18 @@ def argparser():
                         "we must have one folder per annotator. With all " +
                         "the annotated files directly in the folder")
     parser.add_argument("-v", "--variables", required = False, dest = "variables", 
-                        default = 'filename,code',
+                        default = 'filename,label',
                         help = "Comma separated names of columns of interest to compute IAA")    
     parser.add_argument("-l", "--labels", required = False, dest = "labels", 
                         default = 'MORFOLOGIA_NEOPLASIA',
-                        help = "Comma separated names of NON relevant labels")    
+                        help = "Comma separated names of relevant labels")    
     
     args = parser.parse_args()
     
     return args.path1, args.variables, args.labels
 
 
-def parse_ann(datapath, labels_to_ignore, with_notes=False):
+def parse_ann(datapath, relevant_labels, with_notes=False):
     '''
     DESCRIPTION: parse information in .ann files.
     
@@ -39,6 +39,8 @@ def parse_ann(datapath, labels_to_ignore, with_notes=False):
     ----------
     datapath: str. 
         Route to the folder where the files are. 
+    relevant_labels: list
+        List of annotation labels I am parsing
            
     Returns
     -------
@@ -58,7 +60,8 @@ def parse_ann(datapath, labels_to_ignore, with_notes=False):
              #print(os.path.join(root,filename))
              
              info, filenames = parse_one_ann(info, filenames, root, filename,
-                                             labels_to_ignore, ignore_related=True)
+                                             relevant_labels, ignore_related=True,
+                                             with_notes=with_notes)
 
     # Save parsed .ann files
     if with_notes == True:
@@ -72,7 +75,7 @@ def parse_ann(datapath, labels_to_ignore, with_notes=False):
     return df
 
 
-def parse_one_ann(info, filenames, root, filename, labels_to_ignore,
+def parse_one_ann(info, filenames, root, filename, relevant_labels,
                   ignore_related=False, with_notes=False):
     '''
     DESCRIPTION: parse information in one .ann file.
@@ -127,7 +130,7 @@ def parse_one_ann(info, filenames, root, filename, labels_to_ignore,
             continue
         label_offset = splitted[1]
         label = label_offset.split(' ')[0]
-        if label in labels_to_ignore:
+        if label not in relevant_labels:
             continue
         offset = ' '.join(label_offset.split(' ')[1:])
         span = splitted[2].strip()

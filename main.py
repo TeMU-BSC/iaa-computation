@@ -13,9 +13,9 @@ from compute_iaa import computations
 if __name__ == '__main__':
     
     ##### Get inputs #####
-    datapath, rel_variables, ig_labels = argparser()
+    datapath, rel_variables, rel_labels = argparser()
     relevant_colnames = rel_variables.split(',')
-    labels_to_ignore= ig_labels.split(',')
+    relevant_labels= rel_labels.split(',')
 
     ##### GET ANN INFORMATION #####
     annotator_paths = sorted(get_subfolder_names(datapath))
@@ -23,7 +23,10 @@ if __name__ == '__main__':
 
     list_df = []
     for annotator in annotator_paths:
-        list_df.append(parse_ann(annotator, labels_to_ignore))
+        if 'code' in relevant_colnames:
+            list_df.append(parse_ann(annotator, relevant_labels, with_notes=True))
+        else:
+            list_df.append(parse_ann(annotator, relevant_labels))
     
     ##### COMPUTE IAA #####
     (iaa_all_vs_all, iaa_pairwise,
