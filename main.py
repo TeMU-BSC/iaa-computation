@@ -7,8 +7,9 @@ Created on Mon Apr 20 10:56:20 2020
 Compute IAA from several annotators (all vs all and detailed) and for different
 labels (all together and per label)
 """
-from general_utils import parse_ann, argparser, get_subfolder_names, print_iaa_annotators
+from general_utils import parse_ann, argparser, get_subfolder_names, print_iaa_annotators, output_annotation_tables
 from compute_iaa import computations
+import os
 
 if __name__ == '__main__':
     
@@ -27,6 +28,8 @@ if __name__ == '__main__':
             list_df.append(parse_ann(annotator, relevant_labels, with_notes=True))
         else:
             list_df.append(parse_ann(annotator, relevant_labels))
+    output_annotation_tables(list_df, list(map(lambda x: os.path.join(datapath, x + '.tsv'),
+                                               annotator_names)))
     
     ##### COMPUTE IAA #####
     (iaa_all_vs_all, iaa_pairwise,

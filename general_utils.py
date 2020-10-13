@@ -181,3 +181,22 @@ def print_iaa_annotators(annotator_names, iaa_pairwise):
         c = c + 1
         print('\t', end='')
         print(str(round(v, 3)), end='')
+        
+def output_annotation_tables(list_df, outpaths):
+    '''
+    DESCRIPTION: output pandas DataFrames with annotations to TSV file
+    
+    Parameters
+    ----------
+    list_df: list
+        List with annotation Dataframes. One Dataframe per annotator
+    outpaths: list
+        List with output paths. One path per annotation
+           
+    Returns
+    -------
+    
+    '''
+    for df,path in zip(list_df, outpaths):
+        df.to_csv(path, sep='\t', index=False)
+        
