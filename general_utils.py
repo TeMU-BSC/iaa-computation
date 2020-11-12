@@ -117,12 +117,12 @@ def parse_one_ann(info, filenames, root, filename, relevant_labels,
         splitted = line.split('\t')
         if len(splitted)<3:
             print('Line with less than 3 tabular splits:')
-            print(root + filename)
+            print(os.path.join(root, filename))
             print(line)
             print(splitted)
         if len(splitted)>3:
             print('Line with more than 3 tabular splits:')
-            print(root + filename)
+            print(os.path.join(root, filename))
             print(line)
             print(splitted)
         mark = splitted[0]
