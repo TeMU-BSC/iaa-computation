@@ -7,7 +7,7 @@ Created on Mon Apr 20 10:56:20 2020
 Compute IAA from several annotators (all vs all and detailed) and for different
 labels (all together and per label)
 """
-from general_utils import parse_ann, argparser, get_subfolder_names, print_iaa_annotators, output_annotation_tables
+from utils.general_utils import parse_ann, argparser, get_subfolder_names, print_iaa_annotators, output_annotation_tables
 from compute_iaa import computations
 import os
 
