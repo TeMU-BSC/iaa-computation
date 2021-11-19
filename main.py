@@ -8,6 +8,7 @@ Compute IAA from several annotators (all vs all and detailed) and for different
 labels (all together and per label)
 """
 from utils.general_utils import parse_ann, argparser, get_subfolder_names, print_iaa_annotators, output_annotation_tables
+from utils.create_disagreement_tsv import create_disagreement_tsv
 from compute_iaa import computations
 import os
 
@@ -30,7 +31,7 @@ if __name__ == '__main__':
             list_df.append(parse_ann(annotator, relevant_labels))
     output_annotation_tables(list_df, list(map(lambda x: os.path.join(datapath, x + '.tsv'),
                                                annotator_names)))
-    
+    create_disagreement_tsv(list(map(lambda x: os.path.join(datapath, x + '.tsv'),annotator_names)), os.path.join(datapath, 'disagreement.tsv'))
     ##### COMPUTE IAA #####
     (iaa_all_vs_all, iaa_pairwise,
      iaa_by_label, count_labels) = computations(list_df, relevant_colnames,

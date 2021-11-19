@@ -15,9 +15,11 @@ def create_disagreement_tsv(paths_list, outpath):
     df2 = df2.drop(['mark'], axis=1)
     
     aux = pd.merge(df1, df2, how='outer', on=['filename', 'label', 'offset', 'span'])
+    aux[['offset1', 'offset2']] = aux.offset.str.split(" ",expand=True,).astype(int)
     
     if len(paths_list)==2:
-        aux[aux.isnull().any(axis=1)].sort_values(by=['filename','span']).\
+        aux[aux.isnull().any(axis=1)].sort_values(by=['filename','offset1']).\
+            drop(['offset1', 'offset2'], axis=1).\
             to_csv(outpath, sep='\t', header=True, index=False)
     elif len(paths_list)==3:
         df3 = pd.read_csv(paths_list[2], sep='\t', header=0)
